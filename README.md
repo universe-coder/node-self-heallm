@@ -1,5 +1,16 @@
 # node-self-heallm
 
+[![npm version](https://img.shields.io/npm/v/node-self-heallm?style=flat)](https://www.npmjs.com/package/node-self-heallm)
+[![npm downloads](https://img.shields.io/npm/dm/node-self-heallm?style=flat)](https://www.npmjs.com/package/node-self-heallm)
+[![npm license](https://img.shields.io/npm/l/node-self-heallm?style=flat)](https://www.npmjs.com/package/node-self-heallm)
+[![Node.js](https://img.shields.io/node/v/node-self-heallm?style=flat)](https://www.npmjs.com/package/node-self-heallm)
+
+[![GitHub stars](https://img.shields.io/github/stars/universe-coder/node-self-heallm?style=flat)](https://github.com/universe-coder/node-self-heallm/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/universe-coder/node-self-heallm?style=flat)](https://github.com/universe-coder/node-self-heallm/network/members)
+[![GitHub issues](https://img.shields.io/github/issues/universe-coder/node-self-heallm?style=flat)](https://github.com/universe-coder/node-self-heallm/issues)
+[![GitHub last commit](https://img.shields.io/github/last-commit/universe-coder/node-self-heallm?style=flat)](https://github.com/universe-coder/node-self-heallm/commits)
+[![GitHub license](https://img.shields.io/github/license/universe-coder/node-self-heallm?style=flat)](https://github.com/universe-coder/node-self-heallm/blob/main/LICENSE)
+
 Self-healing runtime for Node.js and TypeScript projects.
 
 The package helps you:
