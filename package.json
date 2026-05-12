@@ -1,6 +1,6 @@
 {
   "name": "node-self-heallm",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Self-healing runtime for Node.js: traceback capture, LLM diff generation, and safe patching.",
   "license": "MIT",
   "type": "module",

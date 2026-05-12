@@ -17,8 +17,15 @@ function makePrompt(tracebackText: string, snippets: Array<{ path: string; conte
     .map((item) => `FILE: ${item.path}\n${item.content}`)
     .join("\n\n---\n\n");
   return [
-    "You are a coding assistant. Return ONLY a unified git diff patch.",
-    "Never return prose. Do not execute code.",
+    "You are a coding assistant that must return ONLY a valid unified git diff.",
+    "Hard rules:",
+    "1) Output plain text diff only. No markdown fences. No explanations. No headings.",
+    "2) Start with: diff --git a/<path> b/<path>.",
+    "3) Include proper file headers: --- a/<path> and +++ b/<path> (or /dev/null).",
+    "4) Include at least one hunk header: @@ ... @@.",
+    "5) Patch must be directly applicable with: git apply -",
+    "6) Do not touch files outside provided context unless strictly necessary.",
+    "7) Never output non-diff text before or after the patch.",
     "Traceback:",
     tracebackText,
     "Relevant files:",
