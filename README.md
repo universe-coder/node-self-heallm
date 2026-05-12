@@ -211,6 +211,31 @@ maxTracebackLines = 80
 allowInsecure = false
 ```
 
+### `[heal]` — allowed values
+
+| Field | Allowed values | Purpose |
+|------|----------------|---------|
+| `mode` | string: `suggest` or `apply` | `suggest` — generate a diff and record audit only; `apply` — allow applying the patch (unless blocked by `dryRun`; see below). |
+| `dryRun` | `true` or `false` | When `true`, the patch is never applied to the working tree, even if `mode = "apply"`. |
+| `allowedPaths` | array of glob patterns | Paths in the diff that may be modified. |
+| `forbiddenPaths` | array of glob patterns | Paths that must not be modified. |
+| `maxPatchLines` | positive integer | Upper bound on patch size in lines. |
+
+Runtime behavior: if `dryRun = true` or `mode = "suggest"`, only a proposed diff is produced (audit event `heal_diff_proposed`). `git apply` runs only when `mode = "apply"` and `dryRun = false`.
+
+CLI mapping: `self-heal heal` currently chooses `suggest` vs `apply` from `--apply`, `--auto`, and `--dry-run` / `--no-dry-run`, not from the `[heal].mode` field in the file. The config `mode` mainly reflects intent for programmatic use (`selfHeal("apply")`, etc.) and documents the contract; keep it aligned with how you invoke the CLI. `self-heal run` uses only `--auto` and the dry-run flags. The `selfHeal(mode)` decorator passes the chosen `mode` into the pipeline and uses `dryRun` from `config.heal.dryRun`.
+
+### `[llm].provider` — allowed values
+
+| Value | Description |
+|-------|-------------|
+| `"openai"` | Chat and embeddings via an OpenAI-compatible API (default). |
+| `"huggingface"` | Same protocol, different `baseUrl` (e.g. inference routers). |
+| `"ollama"` | Local OpenAI-compatible endpoint. |
+| `"anthropic"` | Native Messages API; `index` is not available in this setup (no embeddings path). |
+
+For `[index]`, `[supervisor]`, and `[notifications]`, see the template from `self-heal init` and the example above; booleans are `true` / `false`, lists are TOML arrays of strings or numbers.
+
 ## LLM providers
 
 Supported chat providers:
