@@ -248,6 +248,41 @@ Important:
 - Embeddings path in current code is OpenAI-compatible only.
 - With `anthropic`, `self-heal index` intentionally fails fast.
 
+## Choosing LLM models
+
+The workflow sends a traceback plus retrieved code to the chat model and expects a **valid unified diff** back. Pick models that follow instructions reliably; cheap general chat models may omit diff headers, break hunks, or hallucinate paths.
+
+### Chat model (`llm.model`)
+
+| Goal | Suggestion |
+|------|------------|
+| Everyday fixes, CI noise, tight budget | Stay on the default or similar small multimodal/coding model (e.g. `gpt-4o-mini`). Often enough when the bug is localized and retrieval surfaces the right files. |
+| Hard logic, cross-file refactors, unclear stacks | Use a stronger tier on the same API (e.g. `gpt-4o` or the vendor’s latest strong coding model, or a top Claude model). Quality of the diff usually matters more than raw speed. |
+| Local / air-gapped (`ollama`, self-hosted OpenAI-compatible) | Prefer **coding-oriented** weights with a **context window** that fits your prompt (traceback + several file chunks). Smoke-test: run `heal` on a known small error and confirm the model returns a clean `diff --git` block. |
+| Anthropic (`anthropic`) | Use a current Claude model your key can access. Note: the Anthropic path uses a bounded `max_tokens` for the reply; very large patches may truncate—if that happens, narrow retrieval (`index.topK`, globs) or split the fix manually. |
+
+**Practical tips**
+
+- Keep **one provider** for `index` + `heal` when possible so base URLs and keys stay simple. If you index with OpenAI-compatible and heal with Anthropic, that works, but you maintain two stacks.
+- **Temperature** in this package is fixed at `0` for OpenAI-compatible chat—favor models that behave well at low temperature (deterministic, format-following).
+- If the model often returns prose instead of a patch, switch up a tier or add a guard in your process (human review, `dryRun`) rather than fighting the same model repeatedly.
+
+### Embedding model (`llm.embeddingModel`)
+
+Only used on **OpenAI-compatible** providers for `self-heal index`.
+
+| Situation | Suggestion |
+|-----------|------------|
+| Small repos, few languages | Smaller embedding models (e.g. `text-embedding-3-small`) are usually sufficient and cheaper. |
+| Large monorepos, similar symbol names, noisy tracebacks | Consider a larger / higher-quality embedding model if your host offers one, so retrieval ranks the right snippets more often. |
+| Third-party routers | Use whatever embedding id your `baseUrl` documents; mismatched model names fail at runtime, not at config parse time. |
+
+### Cost, latency, and safety
+
+- **Cost**: Most spend is chat tokens (long prompts + diff output). Embeddings are paid per index rebuild, not per heal.
+- **Latency**: Stronger models can be slower; supervised `run` waits on the heal step—budget accordingly for interactive dev.
+- **Safety**: A stronger model does not replace policy checks. Combine a capable model with narrow `heal.allowedPaths`, `dryRun` until you trust the flow, and review diffs before `--no-dry-run`.
+
 ## Notifications
 
 Channels:
